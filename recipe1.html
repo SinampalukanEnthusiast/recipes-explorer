@@ -19,15 +19,9 @@
     style="margin: 0; margin-bottom: 50px"
   >
     <nav class="flex justify-between font-bold text-2xl" style="height: 75px">
-      <a href="/" class="h-full flex align-center" style="padding-left: 30px"
+      <a href="/" class="h-full flex align-center" style="padding-left: 120px"
         >Recipes</a
       >
-      <div class="flex" style="padding-right: 30px">
-        <a class="h-full flex align-center" style="padding-left: 30px">About</a>
-        <a class="h-full flex align-center" style="padding-left: 30px"
-          >Others</a
-        >
-      </div>
     </nav>
     <div class="global-margin">
       <h1 class="roboto-slab">Typical filipino breakfast recipe</h1>
@@ -132,31 +126,135 @@
         </div>
       </div>
       <div class="" style="padding: 20px 0px 0px 20px; padding-bottom: 120px">
+        <hr />
         <h1 class="">Comments</h1>
-        <div class="rounded w-full">
-          <form action="POST" style="padding-bottom: 20px" class="">
-            <input
-              type="text"
-              placeholder="Comment below your thoughts"
-              class="roboto-slab"
-            />
+        <div class="rounded">
+          <form
+            style="padding-bottom: 20px"
+            name="submit-to-google-sheet"
+            class="w-full flex"
+          >
+            <div class="w-half">
+              <input
+                required
+                type="text"
+                placeholder="Enter your name"
+                class="roboto-slab"
+                style="margin-bottom: 10px"
+                name="name"
+              />
+              <textarea
+                name="comment"
+                id=""
+                cols="30"
+                rows="10"
+                placeholder="Enter your thoughts on this recipe..."
+                class="w-full"
+              ></textarea>
+              <input type="submit" />
+            </div>
+            <div class="w-half" style="margin-left: 40px">
+              <div class="flex justify-center align-center">
+                <label for="bad" style="width: 150px">Bad</label><br />
+                <input
+                  required
+                  type="radio"
+                  name="rating"
+                  value="Bad"
+                  id="bad"
+                />
+              </div>
+              <div class="flex justify-center align-center">
+                <label for="alright" style="width: 150px">Alright</label><br />
+                <input
+                  required
+                  type="radio"
+                  name="rating"
+                  value="Alright"
+                  id="alright"
+                />
+              </div>
+
+              <div class="flex justify-center align-center">
+                <label for="awesome" style="width: 150px">Awesome</label><br />
+                <input
+                  required
+                  type="radio"
+                  name="rating"
+                  value="Awesome"
+                  id="awesome"
+                />
+              </div>
+              <div class="flex justify-center align-center">
+                <label for="rating" style="width: 150px">Recommended</label
+                ><br />
+                <input
+                  type="checkbox"
+                  name="recommended"
+                  id="rating"
+                  value="true"
+                />
+              </div>
+            </div>
           </form>
-          <div class="flex flex-column" style="gap: 10px">
+          <div class="flex flex-column" style="gap: 10px" id="comment_section">
             <div class="bg-light-green" style="padding: 15px">
-              <span>Anonymous User says...</span>
+              <span class="font-bold">Anonymous User says... </span>
               <p class="indent">Sarap nyan bro!</p>
-            </div>
-            <div class="bg-light-green" style="padding: 15px">
-              <span>Anonymous User says...</span>
-              <p class="indent">Sarap nyan bro!</p>
-            </div>
-            <div class="bg-light-green" style="padding: 15px">
-              <span>Anonymous User says...</span>
-              <p class="indent">Sarap nyan bro!</p>
+              <span class="indent font-semiregular"
+                >Rating: Awesome | Recommended : YES
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
   </body>
+  <script>
+    const scriptURL =
+      "https://script.google.com/macros/s/AKfycbzVKiD5xUrErMvDVREiScTB7i2Fel64D5jUirI_pOQmQBrdQYaUpMMpEZ58C-pgT5LIDQ/exec";
+    const form = document.forms["submit-to-google-sheet"];
+
+    form.addEventListener("submit", (e) => {
+      fetch(scriptURL, { method: "POST", body: new FormData(form) })
+        .then((response) => {
+          console.log("Success!", response);
+        })
+        .catch((error) => console.error("Error!", error.message));
+    });
+  </script>
+  <script>
+    const section = document.querySelector("#comment_section");
+    console.log(section);
+    const response = fetch(scriptURL, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        // return data;
+        data.forEach((item) => {
+          const div = document.createElement("div");
+          const span = document.createElement("span");
+          const p = document.createElement("p");
+          const span2 = document.createElement("span");
+
+          div.className = "bg-light-green";
+          div.style.padding = "15px";
+
+          span.innerHTML = `${item.name} says...`;
+          span.className = "font-bold";
+          span2.className = "indent font-semiregular";
+          span2.innerHTML = `Rating: ${item.rating} | Recommended: ${
+            item.recommended ? "YES" : "NO"
+          }`;
+          p.className = "indent";
+          p.innerText = `${item.comment}`;
+          div.appendChild(span);
+          div.appendChild(p);
+          div.appendChild(span2);
+          section.appendChild(div);
+        });
+      });
+  </script>
 </html>
