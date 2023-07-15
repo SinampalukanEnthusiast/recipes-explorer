@@ -93,5 +93,16 @@
 }
 
 .bg-light-green {
-  background-color: rgb(209 250 229);
+  background-color: rgb(221, 255, 237);
+}
+.border {
+  border-style: solid;
+  border-width: 2px;
+}
+
+a:link {
+  color: black;
+}
+a:visited {
+  color: black;
 }
